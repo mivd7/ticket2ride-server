@@ -1,4 +1,4 @@
-import { JsonController, Get, Param, Post, Put, HttpCode, BodyParam, CurrentUser, Body, NotFoundError } from 'routing-controllers'
+import { JsonController, Get, Param, Post, Put, HttpCode, BodyParam, CurrentUser, Body, NotFoundError, Delete } from 'routing-controllers'
 import Event from './entity'
 import {Ticket} from '../tickets/entity'
 import {User} from '../users/entity';
@@ -48,6 +48,16 @@ export default class EventController {
         
         const updatedEvent = Event.merge(event,update).save();
         return updatedEvent;
+    }
+
+    @Delete('/events/:id([0-9]+)')
+    async deleteEvent(
+        @Param('id') id: number
+    ) {
+        const event = await Event.findOne(id);
+        if(!event) throw new NotFoundError('Event not found!');
+        
+        return Event.remove(event);
     }
 
     @Post(`/events/:eventId/tickets`)
