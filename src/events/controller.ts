@@ -1,4 +1,4 @@
-import { JsonController, Get, Param, Post, HttpCode, BodyParam, CurrentUser } from 'routing-controllers'
+import { JsonController, Get, Param, Post, Put, HttpCode, BodyParam, CurrentUser, Body, NotFoundError } from 'routing-controllers'
 import Event from './entity'
 import {Ticket} from '../tickets/entity'
 import {User} from '../users/entity';
@@ -38,6 +38,18 @@ export default class EventController {
     return newEvent.save()
     }
 
+    @Put('/events/:id([0-9]+)')
+    async updateEvent(
+        @Param('id') id: number,
+        @Body() update : Partial<Event>
+    ) {
+        const event = await Event.findOne(id);
+        if(!event) throw new NotFoundError('Event not found!');
+        
+        const updatedEvent = Event.merge(event,update).save();
+        return updatedEvent;
+    }
+
     @Post(`/events/:eventId/tickets`)
     @HttpCode(201)
     addTicket(
@@ -52,7 +64,6 @@ export default class EventController {
         newTicket.event = event
         newTicket.user = user
         
-
     return newTicket.save()
     }
 }
