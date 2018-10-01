@@ -25,8 +25,8 @@ export default class EventController {
     @BodyParam('name') name : string,
     @BodyParam('description') description: string,
     @BodyParam('image') image: string,
-    @BodyParam('startDate') startdate: Date,
-    @BodyParam('endDate') enddate: Date
+    @BodyParam('startdate') startdate: Date,
+    @BodyParam('enddate') enddate: Date
 
 ) { const newEvent = new Event()
     newEvent.name = name
