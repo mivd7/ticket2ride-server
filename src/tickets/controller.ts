@@ -40,6 +40,12 @@ export default class TicketsController {
         return await Ticket.query(`SELECT * FROM tickets WHERE id=${id}`)
     }
    
+    @Get('/tickets')
+    async allTickets() {
+        const tickets = await Ticket.find()
+        return tickets
+    }
+
     @HttpCode(201)
     @Post('/events/:id([0-9]+)/tickets')
     async createTicket(
