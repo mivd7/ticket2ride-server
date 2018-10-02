@@ -8,9 +8,10 @@ import {Ticket} from '../tickets/entity';
 
 @Entity()
 export class User extends BaseEntity {
+  [x: string]: any;
 
   @PrimaryGeneratedColumn()
-  id?: number
+  userId?: number
 
   @Column('text', { nullable:true })
   name: string
@@ -20,9 +21,6 @@ export class User extends BaseEntity {
 
   @Column('text', { nullable:true })
   email: string
-
-  @Column('text', { nullable:true })
-  phoneNumber: string
 
   @Column('text', { nullable:true })
   @Exclude({toPlainOnly:true})

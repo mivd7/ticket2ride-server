@@ -1,10 +1,35 @@
-import { JsonController, Get, Param, Post, Put, HttpCode, BodyParam, CurrentUser, Body, NotFoundError, Delete } from 'routing-controllers'
-import Event from './entity'
-import {Ticket} from '../tickets/entity'
+import { JsonController, Post, Get, Param, CurrentUser, Authorized, HttpCode, Body, Put, NotFoundError, Delete} from 'routing-controllers';
+import { IsString, Length, IsOptional, IsUrl, IsDateString } from 'class-validator';
 import {User} from '../users/entity';
+import Event from './entity';
+
+class validEvent {
+
+    @IsString()
+    @Length(2,15)
+    name: string;
+
+    @IsOptional()
+    @IsString()
+    @Length(10,100)
+    description: string;
+  
+    @IsOptional()
+    @IsDateString()
+    startingTime: Date;
+
+    @IsOptional()
+    @IsDateString()
+    endTime: Date;
+
+    @IsOptional()
+    @IsUrl()
+    thumbnail: string;
+    
+}
 
 @JsonController()
-export default class EventController {
+export default class EventsController {
 
     @Get('/events')
     async allEvents() {
@@ -12,32 +37,29 @@ export default class EventController {
         return events
     }
 
-    @Get('/events/:id')
+    @Get('/events/:id([0-9]+)')
     getEvent(
-    @Param('id') id: number
-        ) {
-          return Event.findOne(id)
+      @Param('id') id: number
+    ) {
+      return Event.findOne(id);
     }
 
-    @Post('/events')
+    @Authorized(['admin'])
     @HttpCode(201)
+    @Post('/events')
     async createEvent(
-    @BodyParam('name') name : string,
-    @BodyParam('description') description: string,
-    @BodyParam('image') image: string,
-    @BodyParam('startdate') startdate: Date,
-    @BodyParam('enddate') enddate: Date
+        @Body() event : validEvent,
+        @CurrentUser() user: User
+    ) {
+        const entity = await Event.create(event);
+        entity.user = user;
 
-) { const newEvent = new Event()
-    newEvent.name = name
-    newEvent.description = description
-    newEvent.image = image
-    newEvent.startdate = startdate
-    newEvent.enddate = enddate
-
-    return newEvent.save()
+        const newEvent = await entity.save();
+        return newEvent;
     }
 
+    @Authorized(['admin'])
+    @HttpCode(200)
     @Put('/events/:id([0-9]+)')
     async updateEvent(
         @Param('id') id: number,
@@ -50,6 +72,8 @@ export default class EventController {
         return updatedEvent;
     }
 
+    @Authorized(['admin'])
+    @HttpCode(200)
     @Delete('/events/:id([0-9]+)')
     async deleteEvent(
         @Param('id') id: number
@@ -58,22 +82,5 @@ export default class EventController {
         if(!event) throw new NotFoundError('Event not found!');
         
         return Event.remove(event);
-    }
-
-    @Post(`/events/:eventId/tickets`)
-    @HttpCode(201)
-    addTicket(
-    @Param('eventId') event: Event,
-    @CurrentUser() user: User,
-    @BodyParam('price') price: number,
-    @BodyParam('description') description: string
-    ) {
-        const newTicket = new Ticket
-        newTicket.price = price
-        newTicket.description = description
-        newTicket.event = event
-        newTicket.user = user
-        
-    return newTicket.save()
     }
 }

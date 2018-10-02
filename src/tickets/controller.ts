@@ -1,7 +1,7 @@
-import { JsonController, Post, Get, Param, CurrentUser, Authorized, HttpCode, Body, NotFoundError, Put, Delete} from 'routing-controllers'
-import {User, Customer} from '../users/entity'
+import { JsonController, Post, Get, Param, CurrentUser, HttpCode, Body, NotFoundError, Put, Delete} from 'routing-controllers'
+import {User} from '../users/entity'
 import Event from '../events/entity'
-import {Ticket, TicketInfo} from './entity'
+import {Ticket} from './entity'
 import { IsString, Length, IsNumber, IsUrl, IsOptional } from 'class-validator'
 
 class validTicket {
@@ -27,14 +27,9 @@ export default class TicketsController {
     async getTickets(
         @Param('id') eventId: number
     ) {
-       
-        const customers = await Customer.query(`SELECT * FROM customers`)
-
-        const ticketsInfo = await TicketInfo.query('SELECT * FROM ticket_infos')
 
         const tickets =  await Ticket.query(`SELECT * FROM tickets WHERE event_id=${eventId}`)
-
-        return {tickets, customers, ticketsInfo}
+        return tickets
     }
 
     @Get('/tickets/:id([0-9]+)')
@@ -45,7 +40,6 @@ export default class TicketsController {
         return await Ticket.query(`SELECT * FROM tickets WHERE id=${id}`)
     }
    
-    @Authorized()
     @HttpCode(201)
     @Post('/events/:id([0-9]+)/tickets')
     async createTicket(
@@ -61,24 +55,12 @@ export default class TicketsController {
         entity.event = event
         const newTicket = await entity.save()
 
+        const [ticketPayload] = await Ticket.query(`SELECT * FROM tickets WHERE ticketId=${newTicket.id}`)
 
-        await TicketInfo.create({ticket: newTicket}).save()
-        
-        const customer = await Customer.findOne({user: user})
-        if(!customer) throw new NotFoundError('Not a user')
-        customer.ticketsOffered = customer.ticketsOffered + 1
-        await customer.save()
 
-        const ticketsInfo = await TicketInfo.query('SELECT * FROM ticket_infos')
-        
-        const [ticketPayload] = await Ticket.query(`SELECT * FROM tickets WHERE id=${newTicket.id}`)
-
-        const custommerPayload = await Customer.query(`SELECT * FROM customers`)
-
-        return {ticketPayload, custommerPayload, ticketsInfo}
+        return ticketPayload
     }
 
-    @Authorized(['Author'])
     @HttpCode(200)
     @Put('/tickets/:id([0-9]+)')
     async updateTicket(
@@ -96,27 +78,18 @@ export default class TicketsController {
         return payload
     }
 
-    @Authorized(['Author'])
     @HttpCode(200)
     @Delete('/tickets/:id([0-9]+)')
     async deleteTicket(
         @Param('id') id: number,
-        @CurrentUser() user: User
     ) {
 
         const ticket = await Ticket.findOne(id)
         if(!ticket) throw new NotFoundError('Ticket not found!')
-
-        const customer = await Customer.findOne({user: user})
-        if(!customer) throw new NotFoundError('Not a user')
-        customer.ticketsOffered = customer.ticketsOffered - 1
-        await customer.save()
-
-        const custommerPayload = await Customer.query(`SELECT * FROM customers`)
         
-        await Ticket.remove(ticket)
+        const removeTicket = await Ticket.remove(ticket)
 
-        return custommerPayload
+        return removeTicket
 
     }
 
