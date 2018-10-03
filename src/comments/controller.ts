@@ -1,6 +1,6 @@
 import { JsonController, Post, Get, Param, HttpCode, Body, NotFoundError} from 'routing-controllers'
 // import {User} from '../users/entity'
-import {Ticket, TicketInfo} from '../tickets/entity'
+import {Ticket} from '../tickets/entity'
 import Comment from './entity'
 import { IsString, Length } from 'class-validator';
 
@@ -41,20 +41,9 @@ export default class CommentsController {
         const entity = await Comment.create(comment)
         entity.ticket = ticket
         const newComment = await entity.save()
-               
-        
-        const ticketInfo = await TicketInfo.findOne({ticket})
-        if(!ticketInfo) throw new NotFoundError('Not a ticket')
-
-        ticketInfo.commentsReceived = ticketInfo.commentsReceived + 1
-        await ticketInfo.save()
         
         const [commentsPayload] = await Comment.query(`SELECT * FROM comments WHERE id=${newComment.id}`)
 
-        const infoPayload = await TicketInfo.query(`SELECT * FROM ticket_infos;`)
-
-        return {commentsPayload, infoPayload}
+        return commentsPayload 
     }
-
-    
 }
