@@ -1,8 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToOne, JoinColumn } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToOne, JoinColumn, OneToMany } from 'typeorm'
 import { BaseEntity } from 'typeorm/repository/BaseEntity'
 import {User} from '../users/entity'
 import Event from '../events/entity'
-// import Comment from '../comments/entity'
+import Comment from '../comments/entity'
 import { Exclude } from 'class-transformer' 
 
 @Entity()
@@ -31,8 +31,8 @@ export class Ticket extends BaseEntity {
   @ManyToOne(_=> Event, event => event.tickets, { onDelete: 'CASCADE' })
   event: Event
 
-  // @OneToMany(_=> Comment, comment => comment.ticket)
-  // comments: Comment[]
+  @OneToMany(_=> Comment, comments => comments.ticket)
+  comments: Comment[]
 
 }
 

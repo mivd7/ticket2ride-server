@@ -1,5 +1,5 @@
-import { JsonController, Post, Get, Param, CurrentUser, Authorized, HttpCode, Body, NotFoundError} from 'routing-controllers'
-import {User} from '../users/entity'
+import { JsonController, Post, Get, Param, HttpCode, Body, NotFoundError} from 'routing-controllers'
+// import {User} from '../users/entity'
 import {Ticket, TicketInfo} from '../tickets/entity'
 import Comment from './entity'
 import { IsString, Length } from 'class-validator';
@@ -29,19 +29,16 @@ export default class CommentsController {
       return Comment.findOne(id)
     }
 
-    @Authorized()
     @HttpCode(201)
     @Post('/tickets/:ticketId([0-9]+)/comments')
     async createComment(
         @Param('ticketId') ticketId: number,
         @Body() comment : validMessage,
-        @CurrentUser() user: User
     ) {
         const ticket = await Ticket.findOne(ticketId)
         if(!ticket) throw new NotFoundError('Ticket not Found!')
 
         const entity = await Comment.create(comment)
-        entity.user = user
         entity.ticket = ticket
         const newComment = await entity.save()
                
