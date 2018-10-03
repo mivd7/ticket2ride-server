@@ -61,7 +61,7 @@ export default class TicketsController {
         entity.event = event
         const newTicket = await entity.save()
 
-        const [ticketPayload] = await Ticket.query(`SELECT * FROM tickets WHERE ticketId=${newTicket.id}`)
+        const [ticketPayload] = await Ticket.query(`SELECT * FROM tickets WHERE id=${newTicket.id}`)
 
 
         return ticketPayload
