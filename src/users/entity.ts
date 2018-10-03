@@ -4,7 +4,7 @@ import { Exclude } from 'class-transformer'
 import * as bcrypt from 'bcrypt'
 import Event from '../events/entity'
 import {Ticket} from '../tickets/entity';
-// import Comment from '../comments/entity'
+import Comment from '../comments/entity'
 
 @Entity()
 export class User extends BaseEntity {
@@ -36,8 +36,8 @@ export class User extends BaseEntity {
   @OneToMany(_ => Ticket, ticket => ticket.user)
   tickets: Ticket[]
 
-  // @OneToMany(_ => Comment, comment => comment.user)
-  // comments: Comment[]
+  @OneToMany(_ => Comment, comment => comment.user)
+  comments: Comment[]
 
   async setPassword(rawPassword: string) {
     const hash = await bcrypt.hash(rawPassword, 10)

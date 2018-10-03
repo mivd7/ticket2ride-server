@@ -32,19 +32,19 @@ export default class TicketsController {
         return tickets
     }
 
-    @Get('/tickets/:id([0-9]+)')
-    async getTicket(
-      @Param('id') id: number
-    ) {
-
-        return await Ticket.query(`SELECT * FROM tickets WHERE id=${id}`)
-    }
-   
     @Get('/tickets')
-    async allTickets() {
+    async allEvents() {
         const tickets = await Ticket.find()
         return tickets
     }
+
+    @Get('/tickets/:id([0-9]+)')
+    getEvent(
+      @Param('id') id: number
+    ) {
+      return Ticket.findOne(id);
+    }
+
 
     @HttpCode(201)
     @Post('/events/:id([0-9]+)/tickets')
