@@ -7,6 +7,7 @@ const controller_1 = require("./users/controller");
 const controller_2 = require("./logins/controller");
 const controller_3 = require("./events/controller");
 const controller_4 = require("./tickets/controller");
+const controller_5 = require("./comments/controller");
 const jwt_1 = require("./jwt");
 const entity_1 = require("./users/entity");
 const Koa = require("koa");
@@ -25,6 +26,7 @@ routing_controllers_1.useKoaServer(app, {
         controller_2.default,
         controller_3.default,
         controller_4.default,
+        controller_5.default
     ],
     authorizationChecker: (action) => {
         const header = action.request.headers.authorization;
@@ -45,14 +47,14 @@ routing_controllers_1.useKoaServer(app, {
             const [, token] = header.split(' ');
             if (token) {
                 const { id } = jwt_1.verify(token);
-                return entity_1.default.findOne(id);
+                return entity_1.User.findOne(id);
             }
         }
         return undefined;
     }
 });
 exports.io.use(socketIoJwtAuth.authenticate({ secret: jwt_2.secret }, async (payload, done) => {
-    const user = await entity_1.default.findOne(payload.id);
+    const user = await entity_1.User.findOne(payload.id);
     if (user)
         done(null, user);
     else

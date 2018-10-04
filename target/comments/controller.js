@@ -13,49 +13,59 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const routing_controllers_1 = require("routing-controllers");
-const entity_1 = require("./entity");
-const entity_2 = require("../tickets/entity");
-let CommentController = class CommentController {
-    async allComments() {
-        const comments = await entity_1.default.find();
-        return { comments };
+const entity_1 = require("../tickets/entity");
+const entity_2 = require("./entity");
+const class_validator_1 = require("class-validator");
+class validMessage {
+}
+__decorate([
+    class_validator_1.IsString(),
+    class_validator_1.Length(2, 30),
+    __metadata("design:type", String)
+], validMessage.prototype, "message", void 0);
+let CommentsController = class CommentsController {
+    getComments(ticketId) {
+        return entity_1.Ticket.query(`SELECT * FROM comments WHERE ticket_id=${ticketId}`);
     }
     getComment(id) {
-        return entity_1.default.findOne(id);
+        return entity_2.default.findOne(id);
     }
-    addComment(ticket, commentId, content) {
-        const newComment = new entity_1.default;
-        newComment.commentId = commentId;
-        newComment.content = content;
-        newComment.ticket = ticket;
-        return newComment.save();
+    async createComment(ticketId, comment) {
+        const ticket = await entity_1.Ticket.findOne(ticketId);
+        if (!ticket)
+            throw new routing_controllers_1.NotFoundError('Ticket not Found!');
+        const entity = await entity_2.default.create(comment);
+        entity.ticket = ticket;
+        const newComment = await entity.save();
+        const [commentsPayload] = await entity_2.default.query(`SELECT * FROM comments WHERE id=${newComment.id}`);
+        return commentsPayload;
     }
 };
 __decorate([
-    routing_controllers_1.Get('/comments'),
+    routing_controllers_1.Get('/tickets/:ticketId([0-9]+)/comments'),
+    __param(0, routing_controllers_1.Param('ticketId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], CommentController.prototype, "allComments", null);
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], CommentsController.prototype, "getComments", null);
 __decorate([
-    routing_controllers_1.Get('/comments/:id'),
+    routing_controllers_1.Get('/comments/:id([0-9]+)'),
     __param(0, routing_controllers_1.Param('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
-], CommentController.prototype, "getComment", null);
+], CommentsController.prototype, "getComment", null);
 __decorate([
-    routing_controllers_1.Post(`/comments/:commentId`),
     routing_controllers_1.HttpCode(201),
-    __param(0, routing_controllers_1.BodyParam('ticket')),
-    __param(1, routing_controllers_1.BodyParam('commentId')),
-    __param(2, routing_controllers_1.BodyParam('content')),
+    routing_controllers_1.Post('/tickets/:ticketId([0-9]+)/comments'),
+    __param(0, routing_controllers_1.Param('ticketId')),
+    __param(1, routing_controllers_1.Body()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [entity_2.default, Number, String]),
-    __metadata("design:returntype", void 0)
-], CommentController.prototype, "addComment", null);
-CommentController = __decorate([
+    __metadata("design:paramtypes", [Number, validMessage]),
+    __metadata("design:returntype", Promise)
+], CommentsController.prototype, "createComment", null);
+CommentsController = __decorate([
     routing_controllers_1.JsonController()
-], CommentController);
-exports.default = CommentController;
+], CommentsController);
+exports.default = CommentsController;
 //# sourceMappingURL=controller.js.map

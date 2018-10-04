@@ -1,28 +1,34 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn } from 'typeorm'
 import { BaseEntity } from 'typeorm/repository/BaseEntity'
 import { Exclude } from 'class-transformer'
-import * as bcrypt from 'bcrypt'
+import * as bcrypt from 'bcryptjs'
 import Event from '../events/entity'
 import {Ticket} from '../tickets/entity';
 import Comment from '../comments/entity'
+import { IsString, IsEmail, MinLength } from 'class-validator';
+
 
 @Entity()
 export class User extends BaseEntity {
-  [x: string]: any;
 
   @PrimaryGeneratedColumn()
-  userId?: number
-
+  id?: number
+  
+  @IsString()
   @Column('text', { nullable:true })
-  name: string
+  firstName: string
 
+  @IsString()
   @Column('text', { nullable:true })
   lastName: string
 
-  @Column('text', { nullable:true })
+  @IsEmail()
+  @Column('text', { nullable:false })
   email: string
 
-  @Column('text', { nullable:true })
+  @IsString()
+  @MinLength(8)
+  @Column('text', { nullable:false })
   @Exclude({toPlainOnly:true})
   password: string
 

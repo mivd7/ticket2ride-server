@@ -11,14 +11,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 const BaseEntity_1 = require("typeorm/repository/BaseEntity");
-const entity_1 = require("../tickets/entity");
-const entity_2 = require("../users/entity");
+const entity_1 = require("../users/entity");
+const entity_2 = require("../tickets/entity");
+const class_transformer_1 = require("class-transformer");
 let Event = class Event extends BaseEntity_1.BaseEntity {
 };
 __decorate([
     typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
-], Event.prototype, "eventId", void 0);
+], Event.prototype, "id", void 0);
 __decorate([
     typeorm_1.Column('text', { nullable: true }),
     __metadata("design:type", String)
@@ -28,30 +29,26 @@ __decorate([
     __metadata("design:type", String)
 ], Event.prototype, "description", void 0);
 __decorate([
-    typeorm_1.Column('integer', { nullable: true }),
-    __metadata("design:type", Number)
-], Event.prototype, "price", void 0);
-__decorate([
     typeorm_1.Column('text', { nullable: true }),
-    __metadata("design:type", Object)
+    __metadata("design:type", String)
 ], Event.prototype, "image", void 0);
 __decorate([
-    typeorm_1.Column('date', { nullable: true }),
+    typeorm_1.Column({ type: 'date', nullable: true }),
     __metadata("design:type", Date)
 ], Event.prototype, "startdate", void 0);
 __decorate([
-    typeorm_1.Column('date', { nullable: true }),
+    typeorm_1.Column({ type: 'date', nullable: true }),
     __metadata("design:type", Date)
 ], Event.prototype, "enddate", void 0);
 __decorate([
-    typeorm_1.OneToMany(_ => entity_1.default, ticket => ticket.event, { eager: false }),
-    typeorm_1.JoinColumn(),
-    __metadata("design:type", Array)
-], Event.prototype, "ticket", void 0);
-__decorate([
-    typeorm_1.ManyToOne(_ => entity_2.default, user => user.event, { cascade: true, eager: true }),
-    __metadata("design:type", entity_2.default)
+    class_transformer_1.Exclude({ toPlainOnly: true }),
+    typeorm_1.ManyToOne(_ => entity_1.User, user => user.events),
+    __metadata("design:type", entity_1.User)
 ], Event.prototype, "user", void 0);
+__decorate([
+    typeorm_1.OneToMany(_ => entity_2.Ticket, ticket => ticket.event),
+    __metadata("design:type", Array)
+], Event.prototype, "tickets", void 0);
 Event = __decorate([
     typeorm_1.Entity()
 ], Event);

@@ -23,33 +23,27 @@ var __rest = (this && this.__rest) || function (s, e) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const routing_controllers_1 = require("routing-controllers");
 const entity_1 = require("./entity");
-const index_1 = require("../index");
 let UserController = class UserController {
-    async signup(data) {
-        const { password } = data, rest = __rest(data, ["password"]);
-        const entity = entity_1.default.create(rest);
+    async createUser(user) {
+        const { password } = user, rest = __rest(user, ["password"]);
+        const entity = entity_1.User.create(rest);
         await entity.setPassword(password);
-        const user = await entity.save();
-        index_1.io.emit('action', {
-            type: 'ADD_USER',
-            payload: entity
-        });
-        return user;
+        return entity.save();
     }
     getUser(id) {
-        return entity_1.default.findOne(id);
+        return entity_1.User.findOne(id);
     }
     allUsers() {
-        return entity_1.default.find();
+        return entity_1.User.find();
     }
 };
 __decorate([
     routing_controllers_1.Post('/users'),
     __param(0, routing_controllers_1.Body()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [entity_1.default]),
+    __metadata("design:paramtypes", [entity_1.User]),
     __metadata("design:returntype", Promise)
-], UserController.prototype, "signup", null);
+], UserController.prototype, "createUser", null);
 __decorate([
     routing_controllers_1.Get('/users/:id([0-9]+)'),
     __param(0, routing_controllers_1.Param('id')),

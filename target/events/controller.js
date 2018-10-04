@@ -13,35 +13,63 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const routing_controllers_1 = require("routing-controllers");
-const entity_1 = require("./entity");
-const entity_2 = require("../tickets/entity");
-const entity_3 = require("../users/entity");
-let EventController = class EventController {
+const class_validator_1 = require("class-validator");
+const entity_1 = require("../users/entity");
+const entity_2 = require("./entity");
+class validEvent {
+}
+__decorate([
+    class_validator_1.IsString(),
+    class_validator_1.Length(2, 15),
+    __metadata("design:type", String)
+], validEvent.prototype, "name", void 0);
+__decorate([
+    class_validator_1.IsOptional(),
+    class_validator_1.IsString(),
+    class_validator_1.Length(10, 100),
+    __metadata("design:type", String)
+], validEvent.prototype, "description", void 0);
+__decorate([
+    class_validator_1.IsOptional(),
+    class_validator_1.IsDateString(),
+    __metadata("design:type", Date)
+], validEvent.prototype, "startingTime", void 0);
+__decorate([
+    class_validator_1.IsOptional(),
+    class_validator_1.IsDateString(),
+    __metadata("design:type", Date)
+], validEvent.prototype, "endTime", void 0);
+__decorate([
+    class_validator_1.IsOptional(),
+    class_validator_1.IsUrl(),
+    __metadata("design:type", String)
+], validEvent.prototype, "thumbnail", void 0);
+let EventsController = class EventsController {
     async allEvents() {
-        const events = await entity_1.default.find();
-        return { events };
+        const events = await entity_2.default.find();
+        return events;
     }
     getEvent(id) {
-        return entity_1.default.findOne(id);
+        return entity_2.default.findOne(id);
     }
-    async createEvent(name, description, price, image, startdate, enddate) {
-        const newEvent = new entity_1.default();
-        newEvent.name = name;
-        newEvent.price = price;
-        newEvent.description = description;
-        newEvent.image = image;
-        newEvent.startdate = startdate;
-        newEvent.enddate = enddate;
-        return newEvent.save();
+    async createEvent(event, user) {
+        const entity = await entity_2.default.create(event);
+        entity.user = user;
+        const newEvent = await entity.save();
+        return newEvent;
     }
-    addTicket(event, user, title, price, description) {
-        const newTicket = new entity_2.default;
-        newTicket.title = title;
-        newTicket.price = price;
-        newTicket.description = description;
-        newTicket.event = event;
-        newTicket.users = user;
-        return newTicket.save();
+    async updateEvent(id, update) {
+        const event = await entity_2.default.findOne(id);
+        if (!event)
+            throw new routing_controllers_1.NotFoundError('Event not found!');
+        const updatedEvent = entity_2.default.merge(event, update).save();
+        return updatedEvent;
+    }
+    async deleteEvent(id) {
+        const event = await entity_2.default.findOne(id);
+        if (!event)
+            throw new routing_controllers_1.NotFoundError('Event not found!');
+        return entity_2.default.remove(event);
     }
 };
 __decorate([
@@ -49,43 +77,43 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], EventController.prototype, "allEvents", null);
+], EventsController.prototype, "allEvents", null);
 __decorate([
-    routing_controllers_1.Get('/events/:id'),
+    routing_controllers_1.Get('/events/:id([0-9]+)'),
     __param(0, routing_controllers_1.Param('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
-], EventController.prototype, "getEvent", null);
+], EventsController.prototype, "getEvent", null);
 __decorate([
+    routing_controllers_1.HttpCode(201),
     routing_controllers_1.Post('/events'),
-    routing_controllers_1.HttpCode(201),
-    __param(0, routing_controllers_1.BodyParam('name')),
-    __param(1, routing_controllers_1.BodyParam('description')),
-    __param(2, routing_controllers_1.BodyParam('price')),
-    __param(3, routing_controllers_1.BodyParam('image')),
-    __param(4, routing_controllers_1.BodyParam('startdate')),
-    __param(5, routing_controllers_1.BodyParam('enddate')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, Number, Object, Date,
-        Date]),
-    __metadata("design:returntype", Promise)
-], EventController.prototype, "createEvent", null);
-__decorate([
-    routing_controllers_1.Post(`/events/:eventId/tickets`),
-    routing_controllers_1.HttpCode(201),
-    __param(0, routing_controllers_1.Param('eventId')),
+    __param(0, routing_controllers_1.Body()),
     __param(1, routing_controllers_1.CurrentUser()),
-    __param(2, routing_controllers_1.BodyParam('title')),
-    __param(3, routing_controllers_1.BodyParam('price')),
-    __param(4, routing_controllers_1.BodyParam('description')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [entity_1.default,
-        entity_3.default, String, Number, String]),
-    __metadata("design:returntype", void 0)
-], EventController.prototype, "addTicket", null);
-EventController = __decorate([
+    __metadata("design:paramtypes", [validEvent,
+        entity_1.User]),
+    __metadata("design:returntype", Promise)
+], EventsController.prototype, "createEvent", null);
+__decorate([
+    routing_controllers_1.HttpCode(200),
+    routing_controllers_1.Put('/events/:id([0-9]+)'),
+    __param(0, routing_controllers_1.Param('id')),
+    __param(1, routing_controllers_1.Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", Promise)
+], EventsController.prototype, "updateEvent", null);
+__decorate([
+    routing_controllers_1.HttpCode(200),
+    routing_controllers_1.Delete('/events/:id([0-9]+)'),
+    __param(0, routing_controllers_1.Param('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], EventsController.prototype, "deleteEvent", null);
+EventsController = __decorate([
     routing_controllers_1.JsonController()
-], EventController);
-exports.default = EventController;
+], EventsController);
+exports.default = EventsController;
 //# sourceMappingURL=controller.js.map

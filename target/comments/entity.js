@@ -11,20 +11,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 const BaseEntity_1 = require("typeorm/repository/BaseEntity");
-const entity_1 = require("../tickets/entity");
+const entity_1 = require("../users/entity");
+const entity_2 = require("../tickets/entity");
 let Comment = class Comment extends BaseEntity_1.BaseEntity {
 };
 __decorate([
     typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
-], Comment.prototype, "commentId", void 0);
+], Comment.prototype, "id", void 0);
 __decorate([
     typeorm_1.Column('text', { nullable: true }),
     __metadata("design:type", String)
-], Comment.prototype, "content", void 0);
+], Comment.prototype, "message", void 0);
 __decorate([
-    typeorm_1.ManyToOne(_ => entity_1.default, ticket => ticket.comments, { cascade: true, eager: true }),
-    __metadata("design:type", entity_1.default)
+    typeorm_1.CreateDateColumn({ type: 'timestamp' }),
+    __metadata("design:type", Date)
+], Comment.prototype, "timeOfCreation", void 0);
+__decorate([
+    typeorm_1.ManyToOne(_ => entity_1.User, user => user.comments),
+    __metadata("design:type", entity_1.User)
+], Comment.prototype, "user", void 0);
+__decorate([
+    typeorm_1.ManyToOne(_ => entity_2.Ticket, ticket => ticket.comments, { onDelete: 'CASCADE' }),
+    __metadata("design:type", entity_2.Ticket)
 ], Comment.prototype, "ticket", void 0);
 Comment = __decorate([
     typeorm_1.Entity()
