@@ -47,7 +47,7 @@ useKoaServer(app, {
     const header: string = action.request.headers.authorization
     if (header && header.startsWith('Bearer ')) {
       const [ , token ] = header.split(' ')
-
+      
       if (token) {
         const {id} = verify(token)
         return User.findOne(id)
@@ -64,6 +64,7 @@ io.use(socketIoJwtAuth.authenticate({ secret }, async (payload, done) => {
 }))
 
 io.on('connect', socket => {
+
   const name = socket.request.user.firstName
   console.log(`User ${name} just connected`)
 
@@ -72,9 +73,12 @@ io.on('connect', socket => {
   })
 })
 
+
+
 setupDb()
   .then(_ => {
     server.listen(port)
     console.log(`Listening on port ${port}`)
   })
   .catch(err => console.error(err))
+

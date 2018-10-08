@@ -13,8 +13,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const routing_controllers_1 = require("routing-controllers");
-const entity_1 = require("../tickets/entity");
-const entity_2 = require("./entity");
+const entity_1 = require("../users/entity");
+const entity_2 = require("../tickets/entity");
+const entity_3 = require("./entity");
 const class_validator_1 = require("class-validator");
 class validMessage {
 }
@@ -25,19 +26,20 @@ __decorate([
 ], validMessage.prototype, "message", void 0);
 let CommentsController = class CommentsController {
     getComments(ticketId) {
-        return entity_1.Ticket.query(`SELECT * FROM comments WHERE ticket_id=${ticketId}`);
+        return entity_2.Ticket.query(`SELECT * FROM comments WHERE ticket_id=${ticketId}`);
     }
     getComment(id) {
-        return entity_2.default.findOne(id);
+        return entity_3.default.findOne(id);
     }
-    async createComment(ticketId, comment) {
-        const ticket = await entity_1.Ticket.findOne(ticketId);
+    async createComment(ticketId, comment, user) {
+        const ticket = await entity_2.Ticket.findOne(ticketId);
         if (!ticket)
             throw new routing_controllers_1.NotFoundError('Ticket not Found!');
-        const entity = await entity_2.default.create(comment);
+        const entity = await entity_3.default.create(comment);
         entity.ticket = ticket;
+        entity.user = user;
         const newComment = await entity.save();
-        const [commentsPayload] = await entity_2.default.query(`SELECT * FROM comments WHERE id=${newComment.id}`);
+        const [commentsPayload] = await entity_3.default.query(`SELECT * FROM comments WHERE id=${newComment.id}`);
         return commentsPayload;
     }
 };
@@ -60,8 +62,10 @@ __decorate([
     routing_controllers_1.Post('/tickets/:ticketId([0-9]+)/comments'),
     __param(0, routing_controllers_1.Param('ticketId')),
     __param(1, routing_controllers_1.Body()),
+    __param(2, routing_controllers_1.Body()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, validMessage]),
+    __metadata("design:paramtypes", [Number, validMessage,
+        entity_1.User]),
     __metadata("design:returntype", Promise)
 ], CommentsController.prototype, "createComment", null);
 CommentsController = __decorate([

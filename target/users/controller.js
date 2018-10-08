@@ -23,12 +23,18 @@ var __rest = (this && this.__rest) || function (s, e) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const routing_controllers_1 = require("routing-controllers");
 const entity_1 = require("./entity");
+const index_1 = require("../index");
 let UserController = class UserController {
-    async createUser(user) {
-        const { password } = user, rest = __rest(user, ["password"]);
+    async signup(data) {
+        const { password } = data, rest = __rest(data, ["password"]);
         const entity = entity_1.User.create(rest);
         await entity.setPassword(password);
-        return entity.save();
+        const user = await entity.save();
+        index_1.io.emit('action', {
+            type: 'ADD_USER',
+            payload: entity
+        });
+        return user;
     }
     getUser(id) {
         return entity_1.User.findOne(id);
@@ -43,7 +49,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [entity_1.User]),
     __metadata("design:returntype", Promise)
-], UserController.prototype, "createUser", null);
+], UserController.prototype, "signup", null);
 __decorate([
     routing_controllers_1.Get('/users/:id([0-9]+)'),
     __param(0, routing_controllers_1.Param('id')),

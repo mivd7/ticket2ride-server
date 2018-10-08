@@ -32,23 +32,25 @@ __decorate([
 ], User.prototype, "id", void 0);
 __decorate([
     class_validator_1.IsString(),
-    typeorm_1.Column('text', { nullable: true }),
+    class_validator_1.MinLength(2),
+    typeorm_1.Column('text'),
     __metadata("design:type", String)
 ], User.prototype, "firstName", void 0);
 __decorate([
     class_validator_1.IsString(),
-    typeorm_1.Column('text', { nullable: true }),
+    class_validator_1.MinLength(2),
+    typeorm_1.Column('text'),
     __metadata("design:type", String)
 ], User.prototype, "lastName", void 0);
 __decorate([
     class_validator_1.IsEmail(),
-    typeorm_1.Column('text', { nullable: false }),
+    typeorm_1.Column('text'),
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
     class_validator_1.IsString(),
     class_validator_1.MinLength(8),
-    typeorm_1.Column('text', { nullable: false }),
+    typeorm_1.Column('text'),
     class_transformer_1.Exclude({ toPlainOnly: true }),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
@@ -73,27 +75,27 @@ User = __decorate([
     typeorm_1.Entity()
 ], User);
 exports.User = User;
-let Customer = class Customer extends BaseEntity_1.BaseEntity {
+let Profile = class Profile extends BaseEntity_1.BaseEntity {
 };
 __decorate([
     typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
-], Customer.prototype, "id", void 0);
+], Profile.prototype, "id", void 0);
 __decorate([
     typeorm_1.Column('text', { nullable: true }),
     __metadata("design:type", String)
-], Customer.prototype, "userName", void 0);
+], Profile.prototype, "userName", void 0);
 __decorate([
     typeorm_1.Column({ default: 0 }),
     __metadata("design:type", Number)
-], Customer.prototype, "ticketsOffered", void 0);
+], Profile.prototype, "ticketsOffered", void 0);
 __decorate([
     typeorm_1.OneToOne(_ => User),
     typeorm_1.JoinColumn(),
     __metadata("design:type", User)
-], Customer.prototype, "user", void 0);
-Customer = __decorate([
+], Profile.prototype, "user", void 0);
+Profile = __decorate([
     typeorm_1.Entity()
-], Customer);
-exports.Customer = Customer;
+], Profile);
+exports.Profile = Profile;
 //# sourceMappingURL=entity.js.map

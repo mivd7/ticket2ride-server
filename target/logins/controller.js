@@ -12,31 +12,30 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const class_validator_1 = require("class-validator");
 const routing_controllers_1 = require("routing-controllers");
 const jwt_1 = require("../jwt");
 const entity_1 = require("../users/entity");
-const class_validator_1 = require("class-validator");
 class AuthenticatePayload {
 }
 __decorate([
     class_validator_1.IsString(),
-    class_validator_1.IsEmail(),
     __metadata("design:type", String)
 ], AuthenticatePayload.prototype, "email", void 0);
 __decorate([
     class_validator_1.IsString(),
-    class_validator_1.MinLength(8),
     __metadata("design:type", String)
 ], AuthenticatePayload.prototype, "password", void 0);
 let LoginController = class LoginController {
     async authenticate({ email, password }) {
         const user = await entity_1.User.findOne({ where: { email } });
+        console.log(user);
         if (!user || !user.id)
             throw new routing_controllers_1.BadRequestError('A user with this email does not exist');
         if (!await user.checkPassword(password))
             throw new routing_controllers_1.BadRequestError('The password is not correct');
         const jwt = jwt_1.sign({ id: user.id });
-        return { jwt };
+        return { jwt, user };
     }
 };
 __decorate([

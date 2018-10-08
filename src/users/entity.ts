@@ -13,25 +13,36 @@ export class User extends BaseEntity {
 
   @PrimaryGeneratedColumn()
   id?: number
-  
+
   @IsString()
-  @Column('text', { nullable:true })
+  @MinLength(2)
+  @Column('text')
   firstName: string
 
   @IsString()
-  @Column('text', { nullable:true })
+  @MinLength(2)
+  @Column('text')
   lastName: string
 
   @IsEmail()
-  @Column('text', { nullable:false })
+  @Column('text')
   email: string
 
   @IsString()
   @MinLength(8)
-  @Column('text', { nullable:false })
-  @Exclude({toPlainOnly:true})
+  @Column('text')
+  @Exclude({ toPlainOnly: true })
   password: string
 
+  async setPassword(rawPassword: string) {
+    const hash = await bcrypt.hash(rawPassword, 10)
+    this.password = hash
+  }
+
+  checkPassword(rawPassword: string): Promise<boolean> {
+    return bcrypt.compare(rawPassword, this.password)
+  }
+  
   @Column('boolean',{default: false})
   @Exclude({ toPlainOnly: true })
   admin: boolean
@@ -45,19 +56,10 @@ export class User extends BaseEntity {
   @OneToMany(_ => Comment, comment => comment.user)
   comments: Comment[]
 
-  async setPassword(rawPassword: string) {
-    const hash = await bcrypt.hash(rawPassword, 10)
-    this.password = hash
-  }
-
-  checkPassword(rawPassword: string): Promise<boolean> {
-    return bcrypt.compare(rawPassword, this.password)
-  }
-
 }
 
 @Entity()
-export  class Customer extends BaseEntity {
+export  class Profile extends BaseEntity {
   
   @PrimaryGeneratedColumn()
   id?: number
