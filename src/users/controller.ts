@@ -28,7 +28,12 @@ export default class UserController {
   getUser(
     @Param('id') id: number
   ) {
-    return User.findOne(id)
+    const user = User.findOne(id) 
+    io.emit('action',{
+      type: 'SET_USER',
+      payload: user
+    })
+    return user
   }
 
   @Get('/users')

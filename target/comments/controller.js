@@ -38,6 +38,7 @@ let CommentsController = class CommentsController {
         const entity = await entity_3.default.create(comment);
         entity.ticket = ticket;
         entity.user = user;
+        console.log(user);
         const newComment = await entity.save();
         const [commentsPayload] = await entity_3.default.query(`SELECT * FROM comments WHERE id=${newComment.id}`);
         return commentsPayload;
@@ -62,7 +63,7 @@ __decorate([
     routing_controllers_1.Post('/tickets/:ticketId([0-9]+)/comments'),
     __param(0, routing_controllers_1.Param('ticketId')),
     __param(1, routing_controllers_1.Body()),
-    __param(2, routing_controllers_1.Body()),
+    __param(2, routing_controllers_1.CurrentUser()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, validMessage,
         entity_1.User]),

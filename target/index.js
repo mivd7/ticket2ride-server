@@ -65,6 +65,8 @@ exports.io.on('connect', socket => {
     console.log(`User ${name} just connected`);
     socket.on('disconnect', () => {
         console.log(`User ${name} just disconnected`);
+        const user = socket.request.user;
+        return { user };
     });
 });
 db_1.default()

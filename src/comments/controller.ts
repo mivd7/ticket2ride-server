@@ -1,4 +1,4 @@
-import { JsonController, Post, Get, Param, HttpCode, Body, NotFoundError} from 'routing-controllers'
+import { JsonController, Post, Get, Param, HttpCode, Body, NotFoundError, CurrentUser} from 'routing-controllers'
 import {User} from '../users/entity'
 import {Ticket} from '../tickets/entity'
 import Comment from './entity'
@@ -34,7 +34,7 @@ export default class CommentsController {
     async createComment(
         @Param('ticketId') ticketId: number,
         @Body() comment : validMessage,
-        @Body() user : User
+        @CurrentUser() user: User
     ) {
         const ticket = await Ticket.findOne(ticketId)
         if(!ticket) throw new NotFoundError('Ticket not Found!')
@@ -42,10 +42,11 @@ export default class CommentsController {
         const entity = await Comment.create(comment)
         entity.ticket = ticket
         entity.user = user
+        console.log(user)
         const newComment = await entity.save()
         
         const [commentsPayload] = await Comment.query(`SELECT * FROM comments WHERE id=${newComment.id}`)
 
-        return commentsPayload 
+        return commentsPayload
     }
 }

@@ -37,7 +37,12 @@ let UserController = class UserController {
         return user;
     }
     getUser(id) {
-        return entity_1.User.findOne(id);
+        const user = entity_1.User.findOne(id);
+        index_1.io.emit('action', {
+            type: 'SET_USER',
+            payload: user
+        });
+        return user;
     }
     allUsers() {
         return entity_1.User.find();
