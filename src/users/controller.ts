@@ -25,15 +25,16 @@ export default class UserController {
 
   
   @Get('/users/:id([0-9]+)')
-  getUser(
+  async getUser(
     @Param('id') id: number
   ) {
-    const user = User.findOne(id) 
-    io.emit('action',{
-      type: 'SET_USER',
-      payload: user
-    })
-    return user
+    return User.findOne(id);
+    // const user = await User.findOne(id) 
+    // // io.emit('action',{
+    // //   type: 'SET_USER',
+    // //   payload: user
+    // // })
+    // return user
   }
 
   @Get('/users')

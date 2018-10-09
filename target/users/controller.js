@@ -36,13 +36,8 @@ let UserController = class UserController {
         });
         return user;
     }
-    getUser(id) {
-        const user = entity_1.User.findOne(id);
-        index_1.io.emit('action', {
-            type: 'SET_USER',
-            payload: user
-        });
-        return user;
+    async getUser(id) {
+        return entity_1.User.findOne(id);
     }
     allUsers() {
         return entity_1.User.find();
@@ -60,7 +55,7 @@ __decorate([
     __param(0, routing_controllers_1.Param('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "getUser", null);
 __decorate([
     routing_controllers_1.Get('/users'),
