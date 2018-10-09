@@ -70,9 +70,6 @@ io.on('connect', socket => {
 
   socket.on('disconnect', () => {
     console.log(`User ${name} just disconnected`)
-  
-  const user = socket.request.user
-  return {user} 
 
   })
 })

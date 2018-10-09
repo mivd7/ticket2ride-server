@@ -36,7 +36,7 @@ let UserController = class UserController {
         });
         return user;
     }
-    async getUser(id) {
+    getUser(id) {
         return entity_1.User.findOne(id);
     }
     allUsers() {
@@ -55,7 +55,7 @@ __decorate([
     __param(0, routing_controllers_1.Param('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", void 0)
 ], UserController.prototype, "getUser", null);
 __decorate([
     routing_controllers_1.Get('/users'),

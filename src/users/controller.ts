@@ -25,7 +25,7 @@ export default class UserController {
 
   
   @Get('/users/:id([0-9]+)')
-  async getUser(
+  getUser(
     @Param('id') id: number
   ) {
     return User.findOne(id);
