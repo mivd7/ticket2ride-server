@@ -1,4 +1,4 @@
-import { JsonController, Post, Get, Param, CurrentUser, HttpCode, Body, Put, NotFoundError, Delete} from 'routing-controllers';
+import { JsonController, Post, Get, Param, CurrentUser, HttpCode, Body, Put, NotFoundError, Delete, Authorized} from 'routing-controllers';
 import { IsString, Length, IsOptional, IsUrl, IsDateString } from 'class-validator';
 import {User} from '../users/entity';
 import Event from './entity';
@@ -44,7 +44,7 @@ export default class EventsController {
       return Event.findOne(id);
     }
 
-    // @Authorized(['admin'])
+    @Authorized()
     @HttpCode(201)
     @Post('/events')
     async createEvent(
@@ -58,7 +58,7 @@ export default class EventsController {
         return newEvent;
     }
 
-    // @Authorized(['admin'])
+    @Authorized()
     @HttpCode(200)
     @Put('/events/:id([0-9]+)')
     async updateEvent(
@@ -72,7 +72,7 @@ export default class EventsController {
         return updatedEvent;
     }
 
-    // @Authorized(['admin'])
+    @Authorized()
     @HttpCode(200)
     @Delete('/events/:id([0-9]+)')
     async deleteEvent(

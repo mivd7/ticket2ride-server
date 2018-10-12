@@ -1,7 +1,7 @@
 import { JsonController, Post, Get, Param, CurrentUser, HttpCode, Body, NotFoundError, Put, Delete, Authorized} from 'routing-controllers'
-import {User} from '../users/entity'
+import {User, Profile} from '../users/entity'
 import Event from '../events/entity'
-import {Ticket} from './entity'
+import {Ticket, TicketInfo} from './entity'
 import { IsString, Length, IsNumber, IsUrl, IsOptional } from 'class-validator'
 // import { io } from '../index';
 
@@ -28,24 +28,25 @@ export default class TicketsController {
     async getTickets(
         @Param('id') eventId: number
     ) {
-        // const profile = await Profile.query(`SELECT * FROM profiles`);
+        const profile = await Profile.query(`SELECT * FROM profiles`);
+
+        const ticketsInfo = await TicketInfo.query('SELECT * FROM ticket_infos');
 
         const tickets =  await Ticket.query(`SELECT * FROM tickets WHERE event_id=${eventId}`);
 
-        return tickets;
+        return {tickets, profile, ticketsInfo};
     }
 
-    @Get('/tickets')
-    async allEvents() {
-        const tickets = await Ticket.find()
-        return tickets
-    }
+    // @Get('/tickets')
+    // async allTickets() {
+       
+    // }
 
     @Get('/tickets/:id([0-9]+)')
-    getEvent(
+   async getTicket(
       @Param('id') id: number
     ) {
-      return Ticket.findOne(id);
+      return await Ticket.query(`SELECT * FROM tickets where id=${id}`)
     }
 
 
@@ -64,12 +65,24 @@ export default class TicketsController {
         entity.user = user;
         entity.event = event;
         const newTicket = await entity.save();
+
+        await TicketInfo.create({ticket: newTicket}).save();
+        
+        const profile = await Profile.findOne({user: user});
+        if(!profile) throw new NotFoundError('Not a user');
+        profile.ticketsOffered = profile.ticketsOffered + 1;
+        await profile.save();
+
+        const ticketsInfo = await TicketInfo.query('SELECT * FROM ticket_infos');
         
         const [ticketPayload] = await Ticket.query(`SELECT * FROM tickets WHERE id=${newTicket.id}`);
 
-        return ticketPayload;
+        const profilePayload = await Profile.query(`SELECT * FROM profiles`);
+
+        return {ticketPayload, profilePayload, ticketsInfo}
     }
 
+    @Authorized()
     @HttpCode(200)
     @Put('/tickets/:id([0-9]+)')
     async updateTicket(
@@ -87,6 +100,7 @@ export default class TicketsController {
         return payload
     }
 
+    @Authorized()
     @HttpCode(200)
     @Delete('/tickets/:id([0-9]+)')
     async deleteTicket(
