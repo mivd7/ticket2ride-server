@@ -1,7 +1,7 @@
 import { JsonController, Post, Get, Param, CurrentUser, HttpCode, Body, NotFoundError, Put, Delete, Authorized} from 'routing-controllers'
-import {User, Profile} from '../users/entity'
+import {User} from '../users/entity'
 import Event from '../events/entity'
-import {Ticket, TicketInfo} from './entity'
+import {Ticket} from './entity'
 import { IsString, Length, IsNumber, IsUrl, IsOptional } from 'class-validator'
 // import { io } from '../index';
 
@@ -28,11 +28,11 @@ export default class TicketsController {
     async getTickets(
         @Param('id') eventId: number
     ) {
-        const profile = await Profile.query(`SELECT * FROM profiles`);
+        // const profile = await Profile.query(`SELECT * FROM profiles`);
 
         const tickets =  await Ticket.query(`SELECT * FROM tickets WHERE event_id=${eventId}`);
 
-        return {tickets, profile};
+        return tickets;
     }
 
     @Get('/tickets')
@@ -64,21 +64,10 @@ export default class TicketsController {
         entity.user = user;
         entity.event = event;
         const newTicket = await entity.save();
-
-        await TicketInfo.create({ticket: newTicket}).save();
-        
-        const profile = await Profile.findOne({user: user});
-        if(!profile) throw new NotFoundError('Not a user');
-        profile.ticketsOffered = profile.ticketsOffered + 1;
-        await profile.save();
-
-        const ticketsInfo = await TicketInfo.query('SELECT * FROM ticket_infos');
         
         const [ticketPayload] = await Ticket.query(`SELECT * FROM tickets WHERE id=${newTicket.id}`);
 
-        const profilePayload = await Profile.query(`SELECT * FROM profiles`);
-
-        return {ticketPayload, profilePayload, ticketsInfo};
+        return ticketPayload;
     }
 
     @HttpCode(200)
