@@ -77,6 +77,13 @@
   resolved "https://registry.yarnpkg.com/@types/http-assert/-/http-assert-1.3.0.tgz#5e932606153da28e1d04f9043f4912cf61fd55dd"
   integrity sha512-RObYTpPMo0IY+ZksPtKHsXlYFRxsYIvUqd68e89Y7otDrXsjBy1VgMd53kxVV0JMsNlkCASjllFOlLlhxEv0iw==
 
+"@types/jsonwebtoken@^7.2.8":
+  version "7.2.8"
+  resolved "https://registry.yarnpkg.com/@types/jsonwebtoken/-/jsonwebtoken-7.2.8.tgz#8d199dab4ddb5bba3234f8311b804d2027af2b3a"
+  integrity sha512-XENN3YzEB8D6TiUww0O8SRznzy1v+77lH7UmuN54xq/IHIsyWjWOzZuFFTtoiRuaE782uAoRwBe/wwow+vQXZw==
+  dependencies:
+    "@types/node" "*"
+
 "@types/keygrip@*":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@types/keygrip/-/keygrip-1.0.1.tgz#ff540462d2fb4d0a88441ceaf27d287b01c3d878"
@@ -143,6 +150,20 @@
   dependencies:
     "@types/express-serve-static-core" "*"
     "@types/mime" "*"
+
+"@types/socket.io@*", "@types/socket.io@^1.4.38":
+  version "1.4.38"
+  resolved "https://registry.yarnpkg.com/@types/socket.io/-/socket.io-1.4.38.tgz#ee1e16d66242a153e1e27aad5a99e0513c39a0ae"
+  integrity sha512-+f49CywK6w2RNDzcug7iUVZoC0262Wr6XrGg0yunW+wFBG8RXC8hiQm94HV1I3H0/8bEodGSjDOxd4i2yhFbwA==
+  dependencies:
+    "@types/node" "*"
+
+"@types/socketio-jwt-auth@^0.0.0":
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/@types/socketio-jwt-auth/-/socketio-jwt-auth-0.0.0.tgz#b29f0b1be58fc2286eaf1a4ed770ad2df18ccca3"
+  integrity sha512-lSnADrQuHf4uWIAGaTpUpHjXLmVidkiWgfugnWx2N6LA6gYna1gzKPxegSF6jqo/u2t+pt7uVXvKXpMUXZpW0A==
+  dependencies:
+    "@types/socket.io" "*"
 
 abbrev@1:
   version "1.1.1"

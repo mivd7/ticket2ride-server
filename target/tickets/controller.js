@@ -36,8 +36,9 @@ __decorate([
 ], validTicket.prototype, "thumbnail", void 0);
 let TicketsController = class TicketsController {
     async getTickets(eventId) {
+        const profile = await entity_1.Profile.query(`SELECT * FROM profiles`);
         const tickets = await entity_3.Ticket.query(`SELECT * FROM tickets WHERE event_id=${eventId}`);
-        return tickets;
+        return { tickets, profile };
     }
     async allEvents() {
         const tickets = await entity_3.Ticket.find();
@@ -54,8 +55,16 @@ let TicketsController = class TicketsController {
         entity.user = user;
         entity.event = event;
         const newTicket = await entity.save();
+        await entity_3.TicketInfo.create({ ticket: newTicket }).save();
+        const profile = await entity_1.Profile.findOne({ user: user });
+        if (!profile)
+            throw new routing_controllers_1.NotFoundError('Not a user');
+        profile.ticketsOffered = profile.ticketsOffered + 1;
+        await profile.save();
+        const ticketsInfo = await entity_3.TicketInfo.query('SELECT * FROM ticket_infos');
         const [ticketPayload] = await entity_3.Ticket.query(`SELECT * FROM tickets WHERE id=${newTicket.id}`);
-        return ticketPayload;
+        const profilePayload = await entity_1.Profile.query(`SELECT * FROM profiles`);
+        return { ticketPayload, profilePayload, ticketsInfo };
     }
     async updateTicket(id, update) {
         const ticket = await entity_3.Ticket.findOne(id);
@@ -94,6 +103,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], TicketsController.prototype, "getEvent", null);
 __decorate([
+    routing_controllers_1.Authorized(),
     routing_controllers_1.HttpCode(201),
     routing_controllers_1.Post('/events/:id([0-9]+)/tickets'),
     __param(0, routing_controllers_1.Param('id')),

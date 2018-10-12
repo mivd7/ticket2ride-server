@@ -26,7 +26,9 @@ exports.default = () => typeorm_1.createConnection({
     url: process.env.DATABASE_URL || 'postgres://postgres:secret@localhost:5432/postgres',
     entities: [
         entity_3.User,
+        entity_3.Profile,
         entity_2.Ticket,
+        entity_2.TicketInfo,
         entity_1.default,
         entity_4.default
     ],

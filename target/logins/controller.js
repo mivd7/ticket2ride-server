@@ -29,7 +29,6 @@ __decorate([
 let LoginController = class LoginController {
     async authenticate({ email, password }) {
         const user = await entity_1.User.findOne({ where: { email } });
-        console.log(user);
         if (!user || !user.id)
             throw new routing_controllers_1.BadRequestError('A user with this email does not exist');
         if (!await user.checkPassword(password))

@@ -10,6 +10,7 @@ const controller_4 = require("./tickets/controller");
 const controller_5 = require("./comments/controller");
 const jwt_1 = require("./jwt");
 const entity_1 = require("./users/entity");
+const entity_2 = require("./tickets/entity");
 const Koa = require("koa");
 const http_1 = require("http");
 const IO = require("socket.io");
@@ -28,12 +29,33 @@ routing_controllers_1.useKoaServer(app, {
         controller_4.default,
         controller_5.default
     ],
-    authorizationChecker: (action) => {
+    authorizationChecker: async (action, roles) => {
         const header = action.request.headers.authorization;
         if (header && header.startsWith('Bearer ')) {
             const [, token] = header.split(' ');
             try {
-                return !!(token && jwt_1.verify(token));
+                const { id } = jwt_1.verify(token);
+                const user = await entity_1.User.findOne(id);
+                if (!user)
+                    throw new routing_controllers_1.NotFoundError('User not found!');
+                if (roles.length) {
+                    const [role] = roles;
+                    switch (role) {
+                        case 'admin':
+                            return !!(user && user.admin);
+                        case 'Author':
+                            const [, , ticketId,] = action.request.path.split('/');
+                            const ticket = await entity_2.Ticket.findOne(Number(ticketId), { relations: ["user"] });
+                            if (!ticket)
+                                throw new routing_controllers_1.NotFoundError('Ticket not found!');
+                            return !!(ticket && (ticket.user.id === user.id));
+                        default:
+                            break;
+                    }
+                }
+                else {
+                    return !!(token && jwt_1.verify(token));
+                }
             }
             catch (e) {
                 throw new routing_controllers_1.BadRequestError(e);
@@ -65,8 +87,6 @@ exports.io.on('connect', socket => {
     console.log(`User ${name} just connected`);
     socket.on('disconnect', () => {
         console.log(`User ${name} just disconnected`);
-        const user = socket.request.user;
-        return { user };
     });
 });
 db_1.default()
