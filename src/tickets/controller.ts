@@ -37,16 +37,18 @@ export default class TicketsController {
         return {tickets, profile, ticketsInfo};
     }
 
-    // @Get('/tickets')
-    // async allTickets() {
-       
-    // }
+    @Get('/tickets')
+    async allTickets() {
+        const tickets = await Ticket.find()
+        return tickets
+    }
 
     @Get('/tickets/:id([0-9]+)')
-   async getTicket(
+    async getTicket(
       @Param('id') id: number
     ) {
-      return await Ticket.query(`SELECT * FROM tickets where id=${id}`)
+        const ticket = await Ticket.findOne(id);
+        return ticket
     }
 
 

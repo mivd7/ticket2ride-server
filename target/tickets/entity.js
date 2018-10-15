@@ -39,7 +39,7 @@ __decorate([
 ], Ticket.prototype, "timeOfCreation", void 0);
 __decorate([
     class_transformer_1.Exclude({ toPlainOnly: true }),
-    typeorm_1.ManyToOne(_ => entity_1.User, user => user.tickets),
+    typeorm_1.ManyToOne(_ => entity_1.User, user => user.tickets, { cascade: true, eager: true }),
     __metadata("design:type", entity_1.User)
 ], Ticket.prototype, "user", void 0);
 __decorate([

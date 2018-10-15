@@ -30,6 +30,7 @@ let UserController = class UserController {
         const entity = entity_1.User.create(rest);
         await entity.setPassword(password);
         const user = await entity.save();
+        await entity_1.Profile.create({ user, userName: `${user.firstName} ${user.lastName}` }).save();
         index_1.io.emit('action', {
             type: 'ADD_USER',
             payload: entity

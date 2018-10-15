@@ -50,7 +50,7 @@ export class User extends BaseEntity {
   @OneToMany(_ => Event, event => event.user)
   events: Event[]
 
-  @OneToMany(_ => Ticket, ticket => ticket.user)
+  @OneToMany(_ => Ticket, ticket => ticket.user, {eager: true})
   tickets: Ticket[]
 
   @OneToMany(_ => Comment, comment => comment.user)

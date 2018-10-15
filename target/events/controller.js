@@ -86,6 +86,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], EventsController.prototype, "getEvent", null);
 __decorate([
+    routing_controllers_1.Authorized(),
     routing_controllers_1.HttpCode(201),
     routing_controllers_1.Post('/events'),
     __param(0, routing_controllers_1.Body()),
@@ -96,6 +97,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], EventsController.prototype, "createEvent", null);
 __decorate([
+    routing_controllers_1.Authorized(),
     routing_controllers_1.HttpCode(200),
     routing_controllers_1.Put('/events/:id([0-9]+)'),
     __param(0, routing_controllers_1.Param('id')),
@@ -105,6 +107,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], EventsController.prototype, "updateEvent", null);
 __decorate([
+    routing_controllers_1.Authorized(),
     routing_controllers_1.HttpCode(200),
     routing_controllers_1.Delete('/events/:id([0-9]+)'),
     __param(0, routing_controllers_1.Param('id')),
