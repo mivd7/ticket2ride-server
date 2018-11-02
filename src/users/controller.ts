@@ -24,21 +24,14 @@ export default class UserController {
     return user
   }
 
-  
-  @Get('/users/:id([0-9]+)')
+@Get('/users/:id([0-9]+)')
   getUser(
-    @Param('id') id: number
-  ) {
-    return User.findOne(id);
-    // const user = await User.findOne(id) 
-    // // io.emit('action',{
-    // //   type: 'SET_USER',
-    // //   payload: user
-    // // })
-    // return user
-  }
+      @Param('id') id: number
+    ) {
+      return User.query(`select * from users where id=${id}`)
+    }
 
-  @Get('/users')
+@Get('/users')
   allUsers() {
     return User.find()
   }

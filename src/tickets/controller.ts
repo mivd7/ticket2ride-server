@@ -37,18 +37,24 @@ export default class TicketsController {
         return {tickets, profile, ticketsInfo};
     }
 
-    @Get('/tickets')
-    async allTickets() {
-        const tickets = await Ticket.find()
-        return tickets
+    @Get('/events/:id([0-9]+)/tickets')
+    async getzz(
+        @Param('id') eventId: number
+    ) {
+        const profile = await Profile.query(`SELECT * FROM profiles`);
+
+        const ticketsInfo = await TicketInfo.query('SELECT * FROM ticket_infos');
+
+        const tickets =  await Ticket.query(`SELECT * FROM tickets WHERE event_id=${eventId}`);
+
+        return {tickets, profile, ticketsInfo};
     }
 
     @Get('/tickets/:id([0-9]+)')
-    async getTicket(
+   async getTicket(
       @Param('id') id: number
     ) {
-        const ticket = await Ticket.findOne(id);
-        return ticket
+      return await Ticket.query(`SELECT * FROM tickets where id=${id}`)
     }
 
 
@@ -71,7 +77,7 @@ export default class TicketsController {
         await TicketInfo.create({ticket: newTicket}).save();
         
         const profile = await Profile.findOne({user: user});
-        if(!profile) throw new NotFoundError('Not a user');
+        if(!profile) throw new NotFoundError('Not a profile');
         profile.ticketsOffered = profile.ticketsOffered + 1;
         await profile.save();
 
