@@ -22,6 +22,7 @@ export default class CommentsController {
     //   return Ticket.query(`SELECT * FROM comments WHERE ticket_id=${ticketId}`)
     // }
 
+    // @Authorized()
     @Get('/tickets/:id([0-9]+)/comments')
     async getComments(
         @Param('id') ticketId: number
