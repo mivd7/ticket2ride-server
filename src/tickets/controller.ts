@@ -37,25 +37,13 @@ export default class TicketsController {
         return {tickets, profiles, ticketsInfo};
     }
 
-    // @Authorized()
-    // @Get(`tickets/:id([0-9]+)`)
-    //   async getTicketWithUser (
-    //      @Param('id') id: number,
-    // ) {
-    //     const ticket = await Ticket.findOne(id)
-    //     console.log(ticket)
-    // }
-
     @Get('/tickets/:id([0-9]+)')
     async getTicket(
       @Param('id') id: number,
-    //   @BodyParam('user_id') userId: number
     ) {
         const ticket = await Ticket.query(`SELECT * FROM tickets WHERE id=${id}`)
         const userId = ticket.map(ticket => ticket.user_id)
-        console.log(userId)
         const profile = await Profile.query(`SELECT * FROM profiles WHERE user_id=${userId[0]}`)
-        console.log(profile)
         return {ticket, profile}
     }
 
