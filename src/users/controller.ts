@@ -1,4 +1,4 @@
-import { JsonController, Post, Param, Get, Body } from 'routing-controllers'
+import { JsonController, Post, Param, Get, Body, BodyParam } from 'routing-controllers'
 import {User, Profile} from './entity';
 import { io } from '../index'
 
@@ -28,9 +28,17 @@ export default class UserController {
   getUser(
       @Param('id') id: number
     ) {
-      return User.query(`select * from users where id=${id}`)
+      return User.findOne(id)
     }
 
+@Get('/profiles/:id([0-9]+)')
+  async getUserName(
+      @BodyParam('id') id: number
+      ) {
+        const profile = await Profile.findOne(id)
+        return profile
+      }
+  
 @Get('/users')
   allUsers() {
     return User.find()

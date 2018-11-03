@@ -28,33 +28,35 @@ export default class TicketsController {
     async getTickets(
         @Param('id') eventId: number
     ) {
-        const profile = await Profile.query(`SELECT * FROM profiles`);
+        const profiles = await Profile.query(`SELECT * FROM profiles`);
 
         const ticketsInfo = await TicketInfo.query('SELECT * FROM ticket_infos');
 
         const tickets =  await Ticket.query(`SELECT * FROM tickets WHERE event_id=${eventId}`);
 
-        return {tickets, profile, ticketsInfo};
+        return {tickets, profiles, ticketsInfo};
     }
 
-    @Get('/events/:id([0-9]+)/tickets')
-    async getzz(
-        @Param('id') eventId: number
-    ) {
-        const profile = await Profile.query(`SELECT * FROM profiles`);
-
-        const ticketsInfo = await TicketInfo.query('SELECT * FROM ticket_infos');
-
-        const tickets =  await Ticket.query(`SELECT * FROM tickets WHERE event_id=${eventId}`);
-
-        return {tickets, profile, ticketsInfo};
-    }
+    // @Authorized()
+    // @Get(`tickets/:id([0-9]+)`)
+    //   async getTicketWithUser (
+    //      @Param('id') id: number,
+    // ) {
+    //     const ticket = await Ticket.findOne(id)
+    //     console.log(ticket)
+    // }
 
     @Get('/tickets/:id([0-9]+)')
-   async getTicket(
-      @Param('id') id: number
+    async getTicket(
+      @Param('id') id: number,
+    //   @BodyParam('user_id') userId: number
     ) {
-      return await Ticket.query(`SELECT * FROM tickets where id=${id}`)
+        const ticket = await Ticket.query(`SELECT * FROM tickets WHERE id=${id}`)
+        const userId = ticket.map(ticket => ticket.user_id)
+        console.log(userId)
+        const profile = await Profile.query(`SELECT * FROM profiles WHERE user_id=${userId[0]}`)
+        console.log(profile)
+        return {ticket, profile}
     }
 
 
@@ -124,3 +126,4 @@ export default class TicketsController {
 
     }   
 }
+
