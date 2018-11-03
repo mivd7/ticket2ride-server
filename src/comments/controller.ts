@@ -1,6 +1,6 @@
 import { JsonController, Post, Get, Param, HttpCode, Body, NotFoundError, CurrentUser} from 'routing-controllers'
 import {User} from '../users/entity'
-import {Ticket} from '../tickets/entity'
+import {Ticket, TicketInfo} from '../tickets/entity'
 import Comment from './entity'
 import { IsString, Length } from 'class-validator';
 
@@ -15,11 +15,22 @@ class validMessage {
 @JsonController()
 export default class CommentsController {
 
-    @Get('/tickets/:ticketId([0-9]+)/comments')
-    getComments(
-      @Param('ticketId') ticketId: number
+    // @Get('/tickets/:ticketId([0-9]+)/comments')
+    // getComments(
+    //   @Param('ticketId') ticketId: number
+    // ) {
+    //   return Ticket.query(`SELECT * FROM comments WHERE ticket_id=${ticketId}`)
+    // }
+
+    @Get('/tickets/:id([0-9]+)/comments')
+    async getComments(
+        @Param('id') ticketId: number
     ) {
-      return Ticket.query(`SELECT * FROM comments WHERE ticket_id=${ticketId}`)
+        const ticketInfo = await TicketInfo.query(`SELECT * FROM ticket_infos where ticket_id=${ticketId}`);
+
+        const comments = await Comment.query(`SELECT * FROM comments WHERE ticket_id=${ticketId}`);
+
+        return {ticketInfo, comments};
     }
 
     @Get('/comments/:id([0-9]+)')

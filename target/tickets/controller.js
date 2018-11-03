@@ -36,14 +36,16 @@ __decorate([
 ], validTicket.prototype, "thumbnail", void 0);
 let TicketsController = class TicketsController {
     async getTickets(eventId) {
-        const profile = await entity_1.Profile.query(`SELECT * FROM profiles`);
+        const profiles = await entity_1.Profile.query(`SELECT * FROM profiles`);
         const ticketsInfo = await entity_3.TicketInfo.query('SELECT * FROM ticket_infos');
         const tickets = await entity_3.Ticket.query(`SELECT * FROM tickets WHERE event_id=${eventId}`);
-        return { tickets, profile, ticketsInfo };
+        return { tickets, profiles, ticketsInfo };
     }
     async getTicket(id) {
-        const data = await entity_3.Ticket.findOne(id);
-        return data;
+        const ticket = await entity_3.Ticket.query(`SELECT * FROM tickets WHERE id=${id}`);
+        const userId = ticket.map(ticket => ticket.user_id);
+        const profile = await entity_1.Profile.query(`SELECT * FROM profiles WHERE user_id=${userId[0]}`);
+        return { ticket, profile };
     }
     async createTicket(eventId, ticket, user) {
         const event = await entity_2.default.findOne(eventId);
@@ -56,7 +58,7 @@ let TicketsController = class TicketsController {
         await entity_3.TicketInfo.create({ ticket: newTicket }).save();
         const profile = await entity_1.Profile.findOne({ user: user });
         if (!profile)
-            throw new routing_controllers_1.NotFoundError('Not a user');
+            throw new routing_controllers_1.NotFoundError('Not a profile');
         profile.ticketsOffered = profile.ticketsOffered + 1;
         await profile.save();
         const ticketsInfo = await entity_3.TicketInfo.query('SELECT * FROM ticket_infos');

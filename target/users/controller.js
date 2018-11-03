@@ -40,6 +40,10 @@ let UserController = class UserController {
     getUser(id) {
         return entity_1.User.findOne(id);
     }
+    async getUserName(id) {
+        const profile = await entity_1.Profile.findOne(id);
+        return profile;
+    }
     allUsers() {
         return entity_1.User.find();
     }
@@ -58,6 +62,13 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], UserController.prototype, "getUser", null);
+__decorate([
+    routing_controllers_1.Get('/profiles/:id([0-9]+)'),
+    __param(0, routing_controllers_1.BodyParam('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getUserName", null);
 __decorate([
     routing_controllers_1.Get('/users'),
     __metadata("design:type", Function),

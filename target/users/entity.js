@@ -64,7 +64,7 @@ __decorate([
     __metadata("design:type", Array)
 ], User.prototype, "events", void 0);
 __decorate([
-    typeorm_1.OneToMany(_ => entity_2.Ticket, ticket => ticket.user),
+    typeorm_1.OneToMany(_ => entity_2.Ticket, ticket => ticket.user, { eager: true }),
     __metadata("design:type", Array)
 ], User.prototype, "tickets", void 0);
 __decorate([

@@ -25,8 +25,10 @@ __decorate([
     __metadata("design:type", String)
 ], validMessage.prototype, "message", void 0);
 let CommentsController = class CommentsController {
-    getComments(ticketId) {
-        return entity_2.Ticket.query(`SELECT * FROM comments WHERE ticket_id=${ticketId}`);
+    async getComments(ticketId) {
+        const ticketInfo = await entity_2.TicketInfo.query(`SELECT * FROM ticket_infos where ticket_id=${ticketId}`);
+        const comments = await entity_3.default.query(`SELECT * FROM comments WHERE ticket_id=${ticketId}`);
+        return { ticketInfo, comments };
     }
     getComment(id) {
         return entity_3.default.findOne(id);
@@ -45,11 +47,11 @@ let CommentsController = class CommentsController {
     }
 };
 __decorate([
-    routing_controllers_1.Get('/tickets/:ticketId([0-9]+)/comments'),
-    __param(0, routing_controllers_1.Param('ticketId')),
+    routing_controllers_1.Get('/tickets/:id([0-9]+)/comments'),
+    __param(0, routing_controllers_1.Param('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], CommentsController.prototype, "getComments", null);
 __decorate([
     routing_controllers_1.Get('/comments/:id([0-9]+)'),
