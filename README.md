@@ -2,7 +2,7 @@ README for Ticket 2 Ride server:
 
 This is the backend side of my tickets app, build with Typescript
 and PostgreSQL. It uses KOA-server. This backend was designed for a ticket resale app, 
-where users can buy and sell their own ticket.
+where users can buy and sell tickets for events & shows.
 
 The DB contains four tables: each for a different feature in the app. These are:
 events, tickets, comments, users. It uses restful API endpoints to create, update and
